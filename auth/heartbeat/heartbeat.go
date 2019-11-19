@@ -1,12 +1,9 @@
 package heartbeat
 
-
-func setHeartBeat()error{
+func setHeartBeat() error {
 	return nil
 }
 
-
-func waitHeartBeat()error{
+func waitHeartBeat() error {
 	return nil
 }
-
