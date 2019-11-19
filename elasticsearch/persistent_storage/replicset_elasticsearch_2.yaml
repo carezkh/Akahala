@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: replicaset-for-elasticsearch-2
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+    - key: ps
+      operator: In
+      values:
+      - elasticsearch-2
+  template:
+    metadata:
+      labels:
+        ps: elasticsearch-2
+        pod-for: elasticsearch
+    spec:
+      containers:
+      - image: 10.0.191.182:5000/elasticsearch_cluster_mode
+        name: container-for-elasticsearch
+        ports:
+        - containerPort: 9200
+          protocol: TCP
+        - containerPort: 9300
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /_cat/health
+            port: 9200
+        livenessProbe:
+          httpGet:
+            path: /_cat/health
+            port: 9200
+          initialDelaySeconds: 66
+          periodSeconds: 66
+        volumeMounts:
+        - name: cephfs
+          mountPath: /usr/share/elasticsearch/data
+      volumes:
+      - name: cephfs
+        cephfs:
+          monitors:
+          - 10.0.169.87:6789
+          path: /elasticsearch_node2
+          secretRef: 
+            name: ceph-secret

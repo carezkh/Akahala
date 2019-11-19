@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: replicaset-for-elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+    - key: pod-for
+      operator: In
+      values:
+      - elasticsearch
+  template:
+    metadata:
+      labels:
+        pod-for: elasticsearch
+    spec:
+      imagePullSecrets:
+      - name: docker-registry-secret
+      containers:
+      - image: 192.168.1.64:5000/elasticsearch
+        name: container-for-elasticsearch
+        ports:
+        - containerPort: 9200
+          protocol: TCP
+        - containerPort: 9300
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /_cat/health
+            port: 9200
+        livenessProbe:
+          httpGet:
+            path: /_cat/health
+            port: 9200
+          initialDelaySeconds: 66
+          periodSeconds: 66

@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: replicaset-for-kibana
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+    - key: pod-for
+      operator: In
+      values:
+      - kibana
+  template:
+    metadata:
+      labels:
+        pod-for: kibana
+    spec:
+      containers:
+      - image: 10.0.191.182:5000/kibana
+        name: container-for-kibana
+        ports:
+        - containerPort: 5601
+          protocol: TCP

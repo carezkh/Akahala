@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: replicaset-for-logstash
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+    - key: pod-for
+      operator: In
+      values:
+      - logstash
+  template:
+    metadata:
+      labels:
+        pod-for: logstash
+    spec:
+      containers:
+      - image: 10.0.191.182:5000/logstash_zstack
+        name: container-for-logstash
+        ports:
+        - containerPort: 5044
+          protocol: TCP
+        volumeMounts:
+        - name: gitrepo
+          mountPath: /usr/share/logstash/pipeline
+      volumes:
+      - name: gitrepo
+        gitRepo:
+          repository: http://dev.zstack.io:9080/kaihang.zhang/zstack-elk-in-kubernetes-logstash-pipeline.git
+          revision: master
+          directory: . 

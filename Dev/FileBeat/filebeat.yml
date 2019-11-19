@@ -1,0 +1,17 @@
+filebeat.inputs:
+- type: log
+  paths:
+# change the path to yours
+  - /usr/local/zstacktest/apache-tomcat/logs/management-server.log 
+  multiline.pattern: '^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}'
+  multiline.negate: true
+  multiline.match: after
+processors:
+- include_fields:
+    fields: ["host","message"]
+output.logstash:
+# add the real hosts url
+  hosts: ["172.20.13.244:30000"]
+# put the event to console for dev
+# output.console:
+#   pretty: true
